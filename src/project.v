@@ -30,7 +30,7 @@ module tt_um_uwasic_onboarding_gavin_ruan (
   wire [7:0] en_reg_pwm_15_8;
   wire [7:0] pwm_duty_cycle;
 
-  pwm_peripheral pwm_peripheral_inst (
+  pwm-peripheral pwm_peripheral_inst (
     .clk(clk),
     .rst_n(rst_n),
     .en_reg_out_7_0(en_reg_out_7_0),
