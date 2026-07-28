@@ -10,7 +10,7 @@ module sync_ff (
 
 reg ff1, ff2;
 
-always @(posedge clk) begin
+always @(posedge clk, negedge reset_n) begin
     if (reset_n == 1'b0) begin
         ff1 <= 1'b0;
         ff2 <= 1'b0;

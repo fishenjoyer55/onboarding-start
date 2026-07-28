@@ -75,7 +75,7 @@ always @(posedge clk, negedge reset_n) begin
             end
 
             //writing function only. indicated by COPI_holder[0] == 1
-            else if (counter == 5'b10000 && COPI_holder[0] == 1) begin
+            else if (counter == 5'b10000 && COPI_holder[15] == 1) begin
                 case (COPI_holder[14:8])
                     7'b000:
                     en_reg_out_7_0 <= COPI_holder[7:0];
@@ -91,6 +91,8 @@ always @(posedge clk, negedge reset_n) begin
 
                     7'b100:
                     pwm_duty_cycle <= COPI_holder[7:0];
+
+                    default: ;
                 endcase
 
                 counter <= 5'b0;
