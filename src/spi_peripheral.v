@@ -70,7 +70,7 @@ always @(posedge clk, negedge reset_n) begin
 
 
             if (counter < 5'b10000) begin
-                COPI_holder <= {COPI_holder[14:0], COPI[0]};
+                COPI_holder <= {COPI_holder[14:0], COPI};
                 counter <= counter + 1;
             end
 
