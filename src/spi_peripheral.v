@@ -40,7 +40,7 @@ sync_ff nCS_syncer (
 reg SCLK_prev, nCS_prev;
 wire SCLK_posedge, nCS_negedge;
 reg [15:0] COPI_holder;
-reg [4:0] counter;
+reg [4:0] counter; //damn it needs to hold 17 values
 
 assign SCLK_posedge = (SCLK & ~SCLK_prev); //bit incoming signal
 //assign nCS_posedge = nCS & ~nCS_prev; //end transaction signal. uh actually this is only true if each transaction is one message. not sure about this one
@@ -57,25 +57,25 @@ always @(posedge clk, negedge reset_n) begin
         SCLK_prev <= 1'b0;
         nCS_prev <= 1'b0;
         COPI_holder <= 16'b0;
-        counter <= 4'b0;
+        counter <= 5'b0;
     end
 
     else begin
 
         if (nCS_negedge) begin
             COPI_holder <= 16'b0;
-            counter <= 4'b0;
+            counter <= 5'b0;
         end
         else if (~nCS && SCLK_posedge) begin
 
 
-            if (counter < 4'b1111) begin
+            if (counter < 5'b10000) begin
                 COPI_holder <= {COPI_holder[14:0], COPI[0]};
                 counter <= counter + 1;
             end
 
             //writing function only. indicated by COPI_holder[0] == 1
-            else if (counter == 4'b1111 && COPI_holder[0] == 1) begin
+            else if (counter == 5'b10000 && COPI_holder[0] == 1) begin
                 case (COPI_holder[14:8])
                     7'b000:
                     en_reg_out_7_0 <= COPI_holder[7:0];
@@ -93,7 +93,7 @@ always @(posedge clk, negedge reset_n) begin
                     pwm_duty_cycle <= COPI_holder[7:0];
                 endcase
 
-                counter <= 4'b0;
+                counter <= 5'b0;
              end
         end 
 
