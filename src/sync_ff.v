@@ -1,15 +1,14 @@
 `default_nettype none
 
 module sync_ff (
-    input wire in
-    input wire clk
-    input reset_n
+    input wire in,
+    input wire clk,
+    input reset_n,
     
     output wire out
 );
 
-reg ff1
-reg ff2
+reg ff1, ff2;
 
 always @(posedge clk) begin
     if (reset_n == 1'b0) begin

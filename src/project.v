@@ -38,7 +38,22 @@ module tt_um_uwasic_onboarding_gavin_ruan (
     .en_reg_pwm_7_0(en_reg_pwm_7_0),
     .en_reg_pwm_15_8(en_reg_pwm_15_8),
     .pwm_duty_cycle(pwm_duty_cycle),
+
     .out({uio_out, uo_out})
+  );
+
+  spi_peripheral spi_peripheral_inst (
+    .clk(clk),
+    .reset_n(rst_n),
+    .unsynced_SCLK(ui_in[0]),
+    .unsynced_COPI(ui_in[1]),
+    .unsynced_nCS(ui_in[2]),
+
+    .en_reg_out_7_0(en_reg_out_7_0),
+    .en_reg_out_15_8(en_reg_out_15_8),
+    .en_reg_pwm_7_0(en_reg_pwm_7_0),
+    .en_reg_pwm_15_8(en_reg_pwm_15_8),
+    .pwm_duty_cycle(pwm_duty_cycle),
   );
 
 

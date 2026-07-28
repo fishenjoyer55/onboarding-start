@@ -1,9 +1,9 @@
 `default_nettype none
 
 module spi_peripheral (
-    input wire unsynced_SCLK,
     input wire clk,
-    input wire reset,
+    input wire reset_n,
+    input wire unsynced_SCLK,
     input wire unsynced_COPI,
     input wire unsynced_nCS,
 
