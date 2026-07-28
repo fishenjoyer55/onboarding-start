@@ -38,12 +38,12 @@ sync_ff nCS_syncer (
 );
 
 reg SCLK_prev, nCS_prev;
-wire SCLK_posedge, nCS_negedge;
+wire SCLK_posedge, nCS_posedge, nCS_negedge;
 reg [15:0] COPI_holder;
 reg [4:0] counter; //damn it needs to hold 17 values
 
 assign SCLK_posedge = (SCLK & ~SCLK_prev); //bit incoming signal
-//assign nCS_posedge = nCS & ~nCS_prev; //end transaction signal. uh actually this is only true if each transaction is one message. not sure about this one
+assign nCS_posedge = nCS & ~nCS_prev; //end transaction signal
 assign nCS_negedge = (~nCS & nCS_prev); //start transaction signal
 
 always @(posedge clk, negedge reset_n) begin
@@ -66,37 +66,35 @@ always @(posedge clk, negedge reset_n) begin
             COPI_holder <= 16'b0;
             counter <= 5'b0;
         end
-        else if (~nCS && SCLK_posedge) begin
+        else if (~nCS && SCLK_posedge && counter < 5'b10000) begin
 
+            COPI_holder <= {COPI_holder[14:0], COPI};
+            counter <= counter + 1;
+        end
 
-            if (counter < 5'b10000) begin
-                COPI_holder <= {COPI_holder[14:0], COPI};
-                counter <= counter + 1;
-            end
+         //writing function only. indicated by COPI_holder[0] == 1
+        else if (counter == 5'b10000 && COPI_holder[15] == 1 && nCS_posedge) begin
+            case (COPI_holder[14:8])
+                7'b000:
+                en_reg_out_7_0 <= COPI_holder[7:0];
 
-            //writing function only. indicated by COPI_holder[0] == 1
-            else if (counter == 5'b10000 && COPI_holder[15] == 1) begin
-                case (COPI_holder[14:8])
-                    7'b000:
-                    en_reg_out_7_0 <= COPI_holder[7:0];
+                7'b001:
+                en_reg_out_15_8 <= COPI_holder[7:0];
 
-                    7'b001:
-                    en_reg_out_15_8 <= COPI_holder[7:0];
+                7'b010:
+                en_reg_pwm_7_0 <= COPI_holder[7:0];
 
-                    7'b010:
-                    en_reg_pwm_7_0 <= COPI_holder[7:0];
+                7'b011:
+                en_reg_pwm_15_8 <= COPI_holder[7:0];
 
-                    7'b011:
-                    en_reg_pwm_15_8 <= COPI_holder[7:0];
+                7'b100:
+                pwm_duty_cycle <= COPI_holder[7:0];
 
-                    7'b100:
-                    pwm_duty_cycle <= COPI_holder[7:0];
+                default: ;
+            endcase
 
-                    default: ;
-                endcase
+            counter <= 5'b0;
 
-                counter <= 5'b0;
-             end
         end 
 
         SCLK_prev <= SCLK;
